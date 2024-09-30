@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>将棋コミュニケーションツール</title>
+</head>
+<body>
+    <h1>将棋チャット</h1>
+    <div id="chat-box"></div>
+    <input type="text" id="chat-input" placeholder="メッセージを入力">
+    <button onclick="sendMessage()">送信</button>
+
+    <h2>将棋盤</h2>
+    <div id="board"></div>
+
+    <script>
+        const ws = new WebSocket("ws://localhost:8080/ws");
+
+        ws.onmessage = function(event) {
+            const msg = JSON.parse(event.data);
+            document.getElementById('chat-box').innerHTML += `<p>${msg.player}: ${msg.chat}</p>`;
+        };
+
+        function sendMessage() {
+            const input = document.getElementById('chat-input').value;
+            const message = {
+                player: "プレイヤー1",
+                chat: input,
+                move: ""
+            };
+            ws.send(JSON.stringify(message));
+            document.getElementById('chat-input').value = '';
+        }
+    </script>
+</body>
+</html>
